@@ -1,24 +1,19 @@
-//jshint esversion:11
-
 const express = require('express')
 const app = express()
-const {products, people}=require('./data')
 
-app.get('/',(req, res)=>{
-    res.send('<h1> Home Page </h1> <a href="/api/products">Products</a>') // serves our data
-})
+const people = require('./routes/people')
+const login = require('./routes/auth')
+// static assets
+app.use(express.static('./methods-public'))
+// parse form data
+app.use(express.urlencoded({ extended: false }))
+// parse json
+app.use(express.json())
 
-app.get('/api/products/:productID', (req, res)=>{
+app.use('/api/people', people)
 
-    const {productID} = req.params;
-    const singleProduct = products.find((product)=> product.id === Number(productID))
-    if(!singleProduct){
-        res.send('Product not found')
-    }
+app.use('/login', login)
 
-    res.json(singleProduct)
-})
-
-app.listen(5000, ()=>{
-    console.log('Server started on port 5000 ...');
+app.listen(5000, () => {
+  console.log('Server is listening on port 5000....')
 })
